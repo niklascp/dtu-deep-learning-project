@@ -55,3 +55,19 @@ def create_data_frame(user, ts, pos_utm, pos_webm, labels, segmentation = False,
         df['segment_point_count'] = np.repeat(seq_bin_counts, seq_bin_counts)
     
     return df
+
+def train_test_data_split(u=12, random = Flase):
+    
+    if random:        
+        #Pick random users
+        users = range(0,u)
+        #Split Test/Train according to random pick
+        train_val = random.sample(population=users, k=9) 
+
+        train = train_val[:-1]
+        val = train_val[-1:]
+        test  = [x for x in users if x not in train_val]
+    else:
+        train, val, test = ([8, 6, 4, 5, 9, 1, 11, 7], [2], [0, 3, 10])
+    
+    return train, val, test
