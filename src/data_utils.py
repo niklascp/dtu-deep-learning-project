@@ -92,9 +92,7 @@ from bokeh.models.tiles import WMTSTileSource
 bp.output_notebook()
 
 # Default plot ranges:
-
-def create_image_wrap(fdf, col, x_range = (df['x_web'].min(), df['x_web'].max()), y_range = (df['y_web'].min(), df['y_web'].max()), background = 'black', w=1000, h=900):
-    
+def create_image_wrap(fdf, col, x_range = (1373757.1102773394, 1412506.1502695908), y_range = (7478418.9895278225, 7520786.118694777), background = 'black', w=1000, h=900):    
     def create_image(x_range=x_range, y_range=y_range, w=w, h=h):
         cvs = ds.Canvas(x_range=x_range, y_range=y_range, plot_height=h, plot_width=w)
     
