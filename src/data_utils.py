@@ -71,7 +71,7 @@ def create_data_frame(user, ts, pos_utm, pos_webm, labels, segmentation = False,
     
     return df
 
-def train_test_data_split(u=12, random = Flase):
+def train_test_data_split(u=12, random = False):
     
     if random:        
         #Pick random users
