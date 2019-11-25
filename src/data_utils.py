@@ -41,7 +41,7 @@ def create_data_frame(user, ts, pos_utm, pos_webm, labels, segmentation = False,
     df.sort_values('ts', inplace = True)
     
     df['delta_t'] = np.concatenate([[0], (df['ts'].values[1:] - df['ts'].values[:-1]) / pd.to_timedelta('1s')], axis = 0)    
-    df['delta_d'] = np.concatenate([[0], np.linalg.norm(df[['x', 'y']][1:] - df[['x', 'y']][:-1], axis = 1)], axis = 0)    
+    df['delta_d'] = np.concatenate([[0], np.linalg.norm(df[['x', 'y']].values[1:] - df[['x', 'y']].values[:-1], axis = 1)], axis = 0)    
     df['speed'] = df['delta_d'] / df['delta_t'] 
     
     df = df[lambda x: x['delta_t'] > 0].copy()
