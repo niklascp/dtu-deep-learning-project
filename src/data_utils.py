@@ -4,6 +4,21 @@ import pickle
 
 from torch.utils.data import Dataset
 
+#requirements for random pick of users
+import random
+
+#requirements for plot_filtered()
+import datashader.transfer_functions as dtf
+from colorcet import fire
+import datashader as ds
+import holoviews as hv
+import geoviews as gv
+from holoviews.operation.datashader import datashade
+hv.extension('bokeh')
+#Interactive image
+from datashader.bokeh_ext import InteractiveImage
+import bokeh.plotting as bp
+
 def load_user_data(user, data_directory = '/mnt/array/valse_data/DeepLearning/Project/Pickle', load_web_mercator = False):
     
     with open(f'{data_directory}/TS_{user}.pickle', 'rb') as f:
@@ -71,3 +86,42 @@ def train_test_data_split(u=12, random = Flase):
         train, val, test = ([8, 6, 4, 5, 9, 1, 11, 7], [2], [0, 3, 10])
     
     return train, val, test
+
+import bokeh.plotting as bp
+from bokeh.models.tiles import WMTSTileSource
+bp.output_notebook()
+
+# Default plot ranges:
+
+def create_image_wrap(fdf, col, x_range = (df['x_web'].min(), df['x_web'].max()), y_range = (df['y_web'].min(), df['y_web'].max()), background = 'black', w=1000, h=900):
+    
+    def create_image(x_range=x_range, y_range=y_range, w=w, h=h):
+        cvs = ds.Canvas(x_range=x_range, y_range=y_range, plot_height=h, plot_width=w)
+    
+    
+        agg = cvs.points(fdf, 'x_web', 'y_web', agg=ds.mean(col))
+        image = dtf.shade(agg, cmap=fire)
+        return dtf.dynspread(image, threshold=0.75, max_px=8)
+
+    return create_image
+
+def base_plot(tools='pan,wheel_zoom,reset'):
+    p = bp.figure(tools=tools
+                  , plot_width=int(w)
+                  , plot_height=int(h)
+                  , x_range=x_range, y_range=y_range
+                  , outline_line_color=None,
+        min_border=0, min_border_left=0, min_border_right=0,
+        min_border_top=0, min_border_bottom=0,
+                 x_axis_type="mercator", y_axis_type="mercator")
+    p.xgrid.grid_line_color = None
+    p.ygrid.grid_line_color = None
+    return p
+
+def plot_filtered(col, fdf):
+    p = base_plot()
+    url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{Z}/{Y}/{X}.png"
+    #url="http://tile.stamen.com/toner-background/{Z}/{X}/{Y}.png"
+    tile_renderer = p.add_tile(WMTSTileSource(url=url))
+    tile_renderer.alpha=1.0 if background == "black" else 0.15
+    return InteractiveImage(p, create_image_wrap(col, fdf))
