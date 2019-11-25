@@ -92,7 +92,8 @@ from bokeh.models.tiles import WMTSTileSource
 bp.output_notebook()
 
 # Default plot ranges:
-def create_image_wrap(fdf, col, x_range = (1373757.1102773394, 1412506.1502695908), y_range = (7478418.9895278225, 7520786.118694777), background = 'black', w=1000, h=900):    
+def create_image_wrap(fdf, col, w=1000, h=900, x_range = (1373757.1102773394, 1412506.1502695908), y_range = (7478418.9895278225, 7520786.118694777), background = 'black'):
+    
     def create_image(x_range=x_range, y_range=y_range, w=w, h=h):
         cvs = ds.Canvas(x_range=x_range, y_range=y_range, plot_height=h, plot_width=w)
     
@@ -103,7 +104,7 @@ def create_image_wrap(fdf, col, x_range = (1373757.1102773394, 1412506.150269590
 
     return create_image
 
-def base_plot(tools='pan,wheel_zoom,reset'):
+def base_plot(tools='pan,wheel_zoom,reset', w=1000, h=900, x_range = (1373757.1102773394, 1412506.1502695908), y_range = (7478418.9895278225, 7520786.118694777), background = 'black'):
     p = bp.figure(tools=tools
                   , plot_width=int(w)
                   , plot_height=int(h)
@@ -116,7 +117,7 @@ def base_plot(tools='pan,wheel_zoom,reset'):
     p.ygrid.grid_line_color = None
     return p
 
-def plot_filtered(col, fdf):
+def plot_filtered(col, fdf, background = 'black'):
     p = base_plot()
     url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{Z}/{Y}/{X}.png"
     #url="http://tile.stamen.com/toner-background/{Z}/{X}/{Y}.png"
