@@ -95,6 +95,9 @@ def train_test_data_split(u=12, random = False):
         val = train_val[-1:]
         test  = [x for x in users if x not in train_val]
     else:
+        #this sequence comes form a random sampling
+        #to make it consistent across multiple contributors, and installaitons, 
+        #the seed is not enough. Hence we store it as a statc variable.
         train, val, test = ([8, 6, 4, 5, 9, 1, 11, 7], [2], [0, 3, 10])
     
     return train, val, test
