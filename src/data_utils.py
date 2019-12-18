@@ -19,6 +19,13 @@ hv.extension('bokeh')
 from datashader.bokeh_ext import InteractiveImage
 import bokeh.plotting as bp
 
+import matplotlib.pyplot as plt
+from IPython.display import clear_output
+
+from sklearn.metrics import confusion_matrix, classification_report
+
+import seaborn as sns
+
 def load_user_data(user, data_directory = '/mnt/array/valse_data/DeepLearning/Project/Pickle', load_web_mercator = False):
     
     with open(f'{data_directory}/TS_{user}.pickle', 'rb') as f:
@@ -60,6 +67,10 @@ def create_data_frame(user, ts, pos_utm, pos_webm, labels, segmentation = False,
     df['bearing'] = np.concatenate([[0], np.arctan2(df[['y']].values[1:] - df[['y']].values[:-1], df[['x']].values[1:] - df[['x']].values[:-1]).reshape(-1)], axis = 0)
     df['speed'] = df['delta_d'] / df['delta_t'] 
     
+    cut_labels_6 = [0, 1, 2, 3, 4]
+    cut_bins = [0, 6, 10, 14, 18, 24]
+    df['tod'] = pd.cut(df['ts'].dt.hour, bins=cut_bins, labels=cut_labels_6, right = False).astype(int)
+    
     df = df[lambda x: x['delta_t'] > 0].copy()
     
     seq_bins = np.cumsum((df['delta_t'] >= seq_cutoff_time) | (df['speed'] > seq_cutoff_speed))
@@ -91,6 +102,12 @@ def train_test_data_split(u=12, random = False):
 import bokeh.plotting as bp
 from bokeh.models.tiles import WMTSTileSource
 bp.output_notebook()
+
+# Utility visualization functions
+def hex_to_rgb(hex):
+    hex = hex.lstrip('#')
+    hlen = len(hex)
+    return tuple(int(hex[i:i+hlen//3], 16) for i in range(0, hlen, hlen//3))
 
 # Default plot ranges:
 def create_image_wrap(fdf, col, w=1000, h=900, x_range = (1373757.1102773394, 1412506.1502695908), y_range = (7478418.9895278225, 7520786.118694777), background = 'black'):
